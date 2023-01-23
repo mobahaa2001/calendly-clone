@@ -1,3 +1,5 @@
+import { network } from '@/services/network.service'
+import moment from 'moment'
 import NextAuth from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
@@ -19,14 +21,40 @@ export default NextAuth({
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
-        token.accessToken = account.access_token
-        token.refreshToken = account.refresh_token
+        try {
+          const { data } = await network.post('auth/oauth-login', {
+            email: token.email,
+            name: token.name,
+            access_token: account.access_token,
+            refresh_token: account.refresh_token,
+            expires_at: moment(account.expires_at).toISOString(),
+            provider: account.provider
+          })
+          token.accessToken = data.data.token
+        } catch (e: any) {
+          token.error = e.response.data
+        }
       }
       return token
     },
     async session({ session, token }) {
-      // @TODO: Call the backend so store the token and return the access_token
-      return session
+      if (token.error) {
+        session.user = undefined
+        return {
+          authenticated: false,
+          error: token.error,
+          ...session,
+        }
+      }
+
+      return {
+        authenticated: true,
+        accessToken: token.accessToken,
+        ...session,
+      }
+    },
+    async redirect({ baseUrl, url }) {
+      return '/availability'
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
