@@ -10,4 +10,14 @@ class Availability extends Model
     use HasFactory;
 
     protected $fillable = ['date', 'day', 'start', 'end'];
+    
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
+
+    public function meetings()
+    {
+        return $this->hasMany(Meeting::class);
+    }
 }

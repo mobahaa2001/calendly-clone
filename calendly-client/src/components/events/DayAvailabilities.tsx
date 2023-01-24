@@ -1,8 +1,9 @@
+import { DayAvailabilitiesProps } from '@/types/components/events/day-availabilities';
 import { Availability } from '@/types/models/availability';
 import moment, { Moment } from 'moment'
-import React from 'react'
+import React, { FC } from 'react'
 
-export const DayAvailabilities = ({ availabilities, dayDate }: { availabilities: Array<Availability>; dayDate: Moment }) => {
+export const DayAvailabilities: FC<DayAvailabilitiesProps> = ({ availabilities, dayDate, onAvailabilitySelected }) => {
   return (
     <div className="flex w-full">
       <div className="w-full">
@@ -14,7 +15,8 @@ export const DayAvailabilities = ({ availabilities, dayDate }: { availabilities:
             <ul className="flex flex-col">
               {availabilities.map((availability) => (
                 <li key={availability.id} className="w-full">
-                  <button className="w-full border border-blue-400 px-14 py-4 mt-4 rounded text-blue-600 font-bold text-xl hover:border-blue-700 hover:border-2">
+                  <button className="w-full border border-blue-400 px-14 py-4 mt-4 rounded text-blue-600 font-bold text-xl hover:border-blue-700 hover:border-2"
+                  onClick={() => onAvailabilitySelected(availability.id)}>
                     {moment(availability.start, [moment.ISO_8601, 'HH:mm']).format('hh:mma')}
                   </button>
                 </li>

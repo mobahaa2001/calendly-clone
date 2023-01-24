@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -44,6 +45,21 @@ class User extends Authenticatable
     public function accounts()
     {
         return $this->hasMany(Account::class);
+    }
+
+    public function specificAccount()
+    {
+        return $this->belongsTo(Account::class);
+    }
+
+    public function scopeWithSpecificAccount(Builder $query, string $accountProvider = 'google')
+    {
+        $query->addSelect(['specific_account_id' => Account::select('id')
+            ->whereColumn('user_id', 'users.id')
+            ->where('provider', $accountProvider)
+            ->latest()
+            ->take(1),
+        ])->with('specificAccount');
     }
 
     public function events()

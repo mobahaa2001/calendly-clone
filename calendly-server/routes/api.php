@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MeetingController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,5 +26,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('events', [EventController::class, 'store']);
 });
 Route::get('events/{event}', [EventController::class, 'show']);
+
+
+Route::post('meetings', [MeetingController::class, 'store']);
 
 Route::post('auth/oauth-login', [LoginController::class, 'withOauth']);
