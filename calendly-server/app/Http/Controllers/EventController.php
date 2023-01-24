@@ -7,6 +7,11 @@ use App\Services\EventService;
 
 class EventController extends Controller
 {
+    public function index()
+    {
+        return $this->json(request()->user()->events);
+    }
+
     public function store(StoreEventRequest $request)
     {
         return $this->json(EventService::createUserEvent(
