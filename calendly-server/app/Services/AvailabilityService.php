@@ -39,11 +39,12 @@ class AvailabilityService
     ) {
         $ranges = [];
 
-        CarbonPeriod::create(Carbon::now(), Carbon::now()->addMonth())
+        CarbonPeriod::create(Carbon::now(), Carbon::now()->addMonths(2))
             ->forEach(function ($date) use ($availabilities, &$ranges) {
-                $dayFromDate = Carbon::parse($date)->dayName;
+                $carbonDate = Carbon::parse($date);
+                $dayFromDate = $carbonDate->dayName;
                 if (array_key_exists($dayFromDate, $availabilities)) {
-                    $ranges = array_merge(self::makeDayAvailabilities($date, $dayFromDate, $availabilities[$dayFromDate]), $ranges);
+                    $ranges = array_merge(self::makeDayAvailabilities($carbonDate->toDateString(), $dayFromDate, $availabilities[$dayFromDate]), $ranges);
                 }
             });
 
@@ -63,12 +64,12 @@ class AvailabilityService
             }
         ] 
      *
-     * @param Carbon $date
+     * @param string $date
      * @param string $day
      * @param array $dayAvailabilities
      * @return array
      */
-    public static function makeDayAvailabilities(Carbon $date, string $day,  array $dayAvailabilities): array
+    public static function makeDayAvailabilities(string $date, string $day,  array $dayAvailabilities): array
     {
         $ranges = [];
 
@@ -82,19 +83,19 @@ class AvailabilityService
     /**
      * Generate slots between start and end time
      *
-     * @param Carbon $date
+     * @param string $date
      * @param string $day
      * @param string $startTime
      * @param string $endTime
      * @return array
      */
-    public static function slotsBetweenStartAndEndDates(Carbon $date, string $day, string $startTime, string $endTime): array
+    public static function slotsBetweenStartAndEndDates(string $date, string $day, string $startTime, string $endTime): array
     {
         $start = Carbon::parse($startTime);
         $end = Carbon::parse($endTime);
 
         $ranges = [];
-        while ($start->clone()->addMinutes(30)->lessThan($end)) {
+        while ($start->clone()->addMinutes(30)->lessThanOrEqualTo($end)) {
             $ranges[] = ['start' => $start->format('H:i'), 'end' => $start->addMinutes(30)->format('H:i'), 'date' => $date, 'day' => $day];
         }
 

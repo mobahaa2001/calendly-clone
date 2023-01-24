@@ -24,5 +24,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('events', [EventController::class, 'index']);
     Route::post('events', [EventController::class, 'store']);
 });
+Route::get('events/{event}', [EventController::class, 'show']);
 
 Route::post('auth/oauth-login', [LoginController::class, 'withOauth']);
