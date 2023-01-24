@@ -54,7 +54,7 @@ export default NextAuth({
       }
     },
     async redirect({ baseUrl, url }) {
-      return '/availability'
+      return '/events'
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
