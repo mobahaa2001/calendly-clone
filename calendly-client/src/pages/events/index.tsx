@@ -1,5 +1,7 @@
+import { redirectIfNotAuthenticated } from '@/services/app/auth.service'
 import { network } from '@/services/network.service'
-import { getSession } from 'next-auth/react'
+import { AppSession } from '@/types/auth.types'
+import { GetSessionParams } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React from 'react'
 
@@ -66,30 +68,21 @@ const Events = ({ events, user }: any) => {
   )
 }
 
-export async function getServerSideProps(context: any) {
-  const session: any = await getSession(context)
-  console.log(session)
-  if (!session || !session.authenticated) {
+export async function getServerSideProps(context: GetSessionParams) {
+  return redirectIfNotAuthenticated(context, async (session: AppSession) => {
+    const { data } = await network.get('events', {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    })
+
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
+      props: {
+        events: data.data,
+        user: session.user,
       },
     }
-  }
-
-  const { data } = await network.get('events', {
-    headers: {
-      Authorization: `Bearer ${session?.accessToken}`,
-    },
   })
-
-  return {
-    props: {
-      events: data.data,
-      user: session.user,
-    },
-  }
 }
 
 export default Events

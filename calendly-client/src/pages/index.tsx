@@ -1,4 +1,5 @@
-import { signIn, getSession } from 'next-auth/react'
+import { AppSession } from '@/types/auth.types'
+import { signIn, getSession, GetSessionParams } from 'next-auth/react'
 import Image from 'next/image'
 
 export default function Home() {
@@ -15,10 +16,10 @@ export default function Home() {
   )
 }
 
-export async function getServerSideProps(context: any) {
-  const session: any = await getSession(context)
+export async function getServerSideProps(context: GetSessionParams) {
+  const session = await getSession(context)
 
-  if (session && session.authenticated) {
+  if (session && (session as AppSession).authenticated) {
     return {
       redirect: {
         destination: '/events',
