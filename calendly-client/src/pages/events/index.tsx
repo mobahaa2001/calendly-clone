@@ -37,7 +37,7 @@ const Events = ({ events, user }: any) => {
       <hr className="my-4" />
       <div className="avs flex flex-wrap">
         {events.map((event: Event) => (
-          <EventCard key={event.id} event={event} user={user} />
+          <EventCard key={event.id} event={event} />
         ))}
       </div>
     </div>

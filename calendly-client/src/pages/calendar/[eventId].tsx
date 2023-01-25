@@ -2,34 +2,46 @@ import { DayAvailabilities } from '@/components/events/DayAvailabilities'
 import { MeetingForm } from '@/components/events/MeetingForm'
 import { Calendar } from '@/components/UI/Calendar'
 import { network } from '@/services/network.service'
+import { Availability } from '@/types/models/availability'
 import { UserCalendarPageProps } from '@/types/pages/user-calendar'
 import { Moment } from 'moment'
 import { GetServerSideProps } from 'next'
-import React, { FC, useState } from 'react'
+import { useRouter } from 'next/router'
+import React, { FC, useEffect, useState } from 'react'
+import swal from 'sweetalert'
 
 const UserCalendarPage: FC<UserCalendarPageProps> = ({ event }) => {
+  const router = useRouter()
   const [selectedDate, setSelectedDate] = useState<Moment | null>(null)
-  const [selectedAvailability, setSelectedAvailability] = useState<string | null>(null)
+  const [selectedAvailability, setSelectedAvailability] = useState<Availability | null>(null)
 
   const displayDayMeetings = (date: Moment | null) => {
+    setSelectedAvailability(null)
     setSelectedDate(date)
   }
 
-  const onSlotSelected = (availabilityId: string) => {
-    setSelectedAvailability(availabilityId)
+  const onSlotSelected = (availability: Availability) => {
+    setSelectedAvailability(availability)
   }
 
-  const createMeeting = async (name: string, email: string) => {
-    try {
-      await network.post('meetings', {
-        name,
-        email,
-        availability_id: selectedAvailability,
-      })
-    } catch (e) {
-      console.error(e)
+  useEffect(() => {
+    const meetingCreated = !!localStorage.getItem('meetingCreated')
+    localStorage.removeItem('meetingCreated')
+    if (meetingCreated) {
+      swal({
+        title: 'Good job!',
+        text: 'You clicked the button!',
+        icon: 'success',
+        buttons: 'Aww yiss!',
+      } as { [key: string]: any })
+
+      setTimeout(() => {
+        if (swal.close) {
+          swal.close()
+        }
+      }, 2000)
     }
-  }
+  }, [router])
 
   return (
     <div className="availability-wrapper h-full">
@@ -45,7 +57,7 @@ const UserCalendarPage: FC<UserCalendarPageProps> = ({ event }) => {
               onAvailabilitySelected={onSlotSelected}
             ></DayAvailabilities>
           ) : null}
-          {selectedAvailability ? <MeetingForm createMeeting={createMeeting} /> : null}
+          {selectedAvailability ? <MeetingForm selectedAvailability={selectedAvailability} /> : null}
         </div>
       </div>
     </div>

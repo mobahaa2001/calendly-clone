@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 import { EventCardProps } from '@/types/components/events/event-card.types'
 
-export const EventCard: FC<EventCardProps> = ({ event, user }) => {
+export const EventCard: FC<EventCardProps> = ({ event }) => {
   const copyEventLink = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/calendar/${user.email}/${event.id}`)
+    navigator.clipboard.writeText(`${window.location.origin}/calendar/${event.id}`)
   }
 
   return (

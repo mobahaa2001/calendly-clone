@@ -31,7 +31,7 @@ export const Calendar: FC<CalendarProps> = ({ selectedDays, onDaySelected }) => 
       return 'rounded-full text-blue-700 bg-blue-100 hover:bg-blue-200 font-bold cursor-pointer'
     }
 
-    return ''
+    return 'text-gray-400'
   }
 
   return (
@@ -100,7 +100,7 @@ export const Calendar: FC<CalendarProps> = ({ selectedDays, onDaySelected }) => 
                         <td className="pt-6" key={index + '_' + j} onClick={() => handleSelectDay(day)}>
                           <div className="flex w-full justify-center">
                             {day ? (
-                              <p className={`flex items-center justify-center w-12 h-12 text-gray-400 ${dayStyles(day)}`}>
+                              <p className={`flex items-center justify-center w-12 h-12 ${dayStyles(day)}`}>
                                 {day.format('D')}
                               </p>
                             ) : null}

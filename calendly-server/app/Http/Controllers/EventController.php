@@ -16,7 +16,9 @@ class EventController extends Controller
 
     public function show(Event $event)
     {
-        return $this->json(new EventResource($event->load(['availabilities', 'user'])));
+        return $this->json(new EventResource($event->load(['availabilities' => function ($q) {
+            $q->doesntHave('meetings');
+        }, 'user'])));
     }
 
     public function store(StoreEventRequest $request)
